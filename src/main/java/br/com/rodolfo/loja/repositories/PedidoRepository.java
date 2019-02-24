@@ -3,13 +3,13 @@ package br.com.rodolfo.loja.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.com.rodolfo.loja.domain.Cidade;
+import br.com.rodolfo.loja.domain.Pedido;
 
 /**
- * CidadeRepository
+ * PedidoRepository
  */
 @Repository
-public interface CidadeRepository extends JpaRepository<Cidade, Integer>{
+public interface PedidoRepository extends JpaRepository<Pedido, Integer>{
 
     
 }

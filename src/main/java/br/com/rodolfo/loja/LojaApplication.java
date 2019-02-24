@@ -1,5 +1,6 @@
 package br.com.rodolfo.loja;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,35 +13,48 @@ import br.com.rodolfo.loja.domain.Cidade;
 import br.com.rodolfo.loja.domain.Cliente;
 import br.com.rodolfo.loja.domain.Endereco;
 import br.com.rodolfo.loja.domain.Estado;
+import br.com.rodolfo.loja.domain.Pagamento;
+import br.com.rodolfo.loja.domain.PagamentoBoleto;
+import br.com.rodolfo.loja.domain.PagamentoCartao;
+import br.com.rodolfo.loja.domain.Pedido;
 import br.com.rodolfo.loja.domain.Produto;
+import br.com.rodolfo.loja.domain.enums.EstadoPagamento;
 import br.com.rodolfo.loja.domain.enums.TipoCliente;
 import br.com.rodolfo.loja.repositories.CategoriaRepository;
 import br.com.rodolfo.loja.repositories.CidadeRepository;
 import br.com.rodolfo.loja.repositories.ClienteRepository;
 import br.com.rodolfo.loja.repositories.EnderecoRepository;
 import br.com.rodolfo.loja.repositories.EstadoRepository;
+import br.com.rodolfo.loja.repositories.PagamentoRepository;
+import br.com.rodolfo.loja.repositories.PedidoRepository;
 import br.com.rodolfo.loja.repositories.ProdutoRepository;
 
 @SpringBootApplication
 public class LojaApplication implements CommandLineRunner {
 
 	@Autowired
-	CategoriaRepository categoriaRepository;
+	private CategoriaRepository categoriaRepository;
 
 	@Autowired
-	ProdutoRepository produtoRepository;
+	private ProdutoRepository produtoRepository;
 
 	@Autowired
-	EstadoRepository estadoRepository;
+	private EstadoRepository estadoRepository;
 
 	@Autowired
-	CidadeRepository cidadeRepository;
+	private CidadeRepository cidadeRepository;
 
 	@Autowired
-	ClienteRepository clienteRepository;
+	private ClienteRepository clienteRepository;
 
 	@Autowired
-	EnderecoRepository enderecoRepository;
+	private EnderecoRepository enderecoRepository;
+
+	@Autowired
+	private PedidoRepository pedidoRepository;
+
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(LojaApplication.class, args);
@@ -92,6 +106,23 @@ public class LojaApplication implements CommandLineRunner {
 		clienteRepository.save(cli1);
 		enderecoRepository.saveAll(Arrays.asList(end1, end2));
 
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+
+		Pedido pd1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, end1);
+		Pedido pd2 = new Pedido(null, sdf.parse("10/10/2017 19:30"), cli1, end2);
+
+		Pagamento pag1 = new PagamentoCartao(null, EstadoPagamento.QUITADO, pd1, 6);
+		
+		pd1.setPagamento(pag1);
+		
+		Pagamento pag2 = new PagamentoBoleto(null, EstadoPagamento.PENDENTE, pd2, null, sdf.parse("20/10/2017 00:00"));
+
+		pd2.setPagamento(pag2);
+
+		cli1.getPedidos().addAll(Arrays.asList(pd1, pd2));
+
+		pedidoRepository.saveAll(Arrays.asList(pd1, pd2));
+		pagamentoRepository.saveAll(Arrays.asList(pag1, pag2));
 	}
 
 }

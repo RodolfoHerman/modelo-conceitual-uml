@@ -6,6 +6,8 @@ import java.util.Objects;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * ItemPedido
  */
@@ -20,6 +22,7 @@ public class ItemPedido implements Serializable {
     
     private Double preco;
 
+    @JsonIgnore
     @EmbeddedId
     private ItemPedidoPK id = new ItemPedidoPK();
 
@@ -69,10 +72,13 @@ public class ItemPedido implements Serializable {
         this.id = id;
     }
 
+    @JsonIgnore
     public Pedido getPedido() {
         return this.id.getPedido();
     }
 
+    //Não colocar @JsonIgnore permitindo a serialização e quando acessa o endpoit /pedidos/1
+    //aparecer os produtos
     public Produto getProduto() {
         return this.id.getProduto();
     }
